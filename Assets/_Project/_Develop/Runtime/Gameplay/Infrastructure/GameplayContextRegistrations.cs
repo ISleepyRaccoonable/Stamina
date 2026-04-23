@@ -1,66 +1,73 @@
-﻿using Assets.Project._Develop.Runtime.Gameplay.Configs;
+﻿using Assets.Project._Develop.Runtime.Configs;
 using Assets.Project._Develop.Runtime.Infrastructure.DI;
 using Assets.Project._Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets.Project._Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets.Project._Develop.Runtime.Utilities.SceneManagment;
 using UnityEngine;
 
-namespace Assets.Project._Develop.Runtime.Gameplay.Infrastructure
-{
+namespace Assets.Project._Develop.Runtime.Gameplay.Infrastructure {
     public class GameplayContextRegistrations
     {
-        private static GameplayConditionsConfig _gameplayConditionsConfig;
-
-        public static void Process(DIConteiner conteiner, GameplayInputArgs args)
+        public static void Process(DIContainer conteiner, GameplayInputArgs args)
         {
             Debug.Log("Services regiatration process in gameplay scene");
 
-            _gameplayConditionsConfig = args.Configs;
-
-            conteiner.RegisterAsSingle(CreateSymbolsGenerator);
-            conteiner.RegisterAsSingle(CreateTyper);
+            conteiner.RegisterAsSingle(c => CreateSymbolsGenerator( c, args.Configs));
+            conteiner.RegisterAsSingle(c => CreateTyper( c, args.Configs));
             conteiner.RegisterAsSingle(CreateGameplayConditionsFactory);
             conteiner.RegisterAsSingle(CreateGameModeFactory);
             conteiner.RegisterAsSingle(CreateGameplayCycle);
         }
 
-        private static SymbolsGenerator CreateSymbolsGenerator(DIConteiner c)
+        private static SymbolsGenerator CreateSymbolsGenerator(
+            DIContainer c,
+            GameplayConditionsConfig gameplayConditionsConfig)
         {
-            return new SymbolsGenerator(_gameplayConditionsConfig);
+            return new SymbolsGenerator(gameplayConditionsConfig);
         }
 
-        private static Typer CreateTyper(DIConteiner c)
+        private static Typer CreateTyper(
+            DIContainer c,
+            GameplayConditionsConfig gameplayConditionsConfig)
         {
-            return new Typer(_gameplayConditionsConfig);
+            return new Typer(gameplayConditionsConfig);
         }
 
-        private static GameplayConditionsFactory CreateGameplayConditionsFactory(DIConteiner c)
+        private static GameplayConditionsFactory CreateGameplayConditionsFactory(DIContainer c)
         {
             Typer typer = c.Resolve<Typer>();
-            SymbolsGenerator symbolsGenerator = c.Resolve<SymbolsGenerator>();
 
-            return new GameplayConditionsFactory(typer, symbolsGenerator);
+            return new GameplayConditionsFactory(typer);
         }
 
-        private static GameModeFactory CreateGameModeFactory(DIConteiner c)
+        private static GameModeFactory CreateGameModeFactory(DIContainer c)
         {
             GameplayConditionsFactory gameplayConditionsFactory = c.Resolve<GameplayConditionsFactory>();
             return new GameModeFactory(gameplayConditionsFactory);
         }
 
-        private static GameplayCycle CreateGameplayCycle(DIConteiner c)
+        private static GameplayCycle CreateGameplayCycle(DIContainer c)
         {
             Typer typer = c.Resolve<Typer>();
             ICoroutinesPerformer performer = c.Resolve<ICoroutinesPerformer>();
-            GameplayConditionsFactory gameplayConditionsFactory = c.Resolve<GameplayConditionsFactory>();
             SceneSwitcherService sceneSwitcherService = c.Resolve<SceneSwitcherService>();
             GameModeFactory gameModeFactory = c.Resolve<GameModeFactory>();
+            SymbolsGenerator symbolsGenerator = c.Resolve<SymbolsGenerator>();
+            GameStatisticsService gameStatisticsService = c.Resolve<GameStatisticsService>();
+            GameplayDataProvider gameplayDataProvider = c.Resolve<GameplayDataProvider>();
+            PlayerDataProvider playerDataProvider = c.Resolve<PlayerDataProvider>();
+            WalletValueControllerService walletValueControllerService = c.Resolve<WalletValueControllerService>();
 
             return new GameplayCycle(
                 gameModeFactory,
                 performer,
-                gameplayConditionsFactory,
                 typer,
-                sceneSwitcherService);
+                sceneSwitcherService,
+                symbolsGenerator,
+                gameStatisticsService,
+                gameplayDataProvider,
+                playerDataProvider,
+                walletValueControllerService);
         }
     }
 }

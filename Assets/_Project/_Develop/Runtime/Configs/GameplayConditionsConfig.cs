@@ -1,6 +1,7 @@
+using Assets.Project._Develop.Runtime.Gameplay;
 using UnityEngine;
 
-namespace Assets.Project._Develop.Runtime.Gameplay.Configs
+namespace Assets.Project._Develop.Runtime.Configs
 {
     [CreateAssetMenu(menuName = "Configs/GameplayConditionsConfig", fileName = "GameplayConditionsConfig")]
     public class GameplayConditionsConfig : ScriptableObject

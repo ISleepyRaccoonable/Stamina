@@ -3,6 +3,7 @@ using Assets.Project._Develop.Runtime.Infrastructure.DI;
 using Assets.Project._Develop.Runtime.Infrastructure.LoadingScreen;
 using Assets.Project._Develop.Runtime.Utilities.ConfigsManagment;
 using Assets.Project._Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets.Project._Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets.Project._Develop.Runtime.Utilities.SceneManagment;
 using UnityEngine;
 
@@ -14,9 +15,11 @@ namespace Assets.Project._Develop.Runtime.Infrastructure.EntryPoint
         {
             SetupAppSettings();
 
-            DIConteiner projectConteiner = new DIConteiner();
+            DIContainer projectConteiner = new DIContainer();
 
             ProjectContextRegistrations.Process(projectConteiner);
+
+            projectConteiner.Initialize();
 
             projectConteiner.Resolve<ICoroutinesPerformer>().StartPerform(Initialize(projectConteiner));
         }
@@ -27,7 +30,7 @@ namespace Assets.Project._Develop.Runtime.Infrastructure.EntryPoint
             Application.targetFrameRate = 60; 
         }
 
-        private IEnumerator Initialize(DIConteiner conteiner)
+        private IEnumerator Initialize(DIContainer conteiner)
         {
             ILoadingScreen loadingScreen = conteiner.Resolve<ILoadingScreen>();
             SceneSwitcherService sceneSwitcherService = conteiner.Resolve<SceneSwitcherService>();

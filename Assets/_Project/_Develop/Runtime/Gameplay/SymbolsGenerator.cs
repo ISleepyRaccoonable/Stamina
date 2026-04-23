@@ -1,5 +1,5 @@
 using System.Text;
-using Assets.Project._Develop.Runtime.Gameplay.Configs;
+using Assets.Project._Develop.Runtime.Configs;
 using UnityEngine;
 
 namespace Assets.Project._Develop.Runtime.Gameplay

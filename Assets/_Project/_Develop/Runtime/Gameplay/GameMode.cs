@@ -4,7 +4,7 @@ namespace Assets.Project._Develop.Runtime.Gameplay
 {
     public class GameMode : IDisposable
     {
-        public event Action IsWined;
+        public event Action IsWon;
         public event Action IsDefeated;
 
         private IGameCondition _winCondition;
@@ -39,7 +39,7 @@ namespace Assets.Project._Develop.Runtime.Gameplay
 
         private void Win()
         {
-            IsWined?.Invoke();
+            IsWon?.Invoke();
             Dispose();
         }
 

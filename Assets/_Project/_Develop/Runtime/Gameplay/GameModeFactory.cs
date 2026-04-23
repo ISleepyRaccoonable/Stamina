@@ -5,13 +5,15 @@
         private GameplayConditionsFactory _gameplayConditionsFactory;
 
         public GameModeFactory(GameplayConditionsFactory gameplayConditionsFactory)
-            => _gameplayConditionsFactory = gameplayConditionsFactory;
+        {
+            _gameplayConditionsFactory = gameplayConditionsFactory;
+        }
 
-        public GameMode CreateGameMode()
+        public GameMode CreateGameMode(string generatedSequence)
         {
             return new GameMode(
-                _gameplayConditionsFactory.CreateWinCondition(),
-                _gameplayConditionsFactory.CreateDefeatCondition());
+                _gameplayConditionsFactory.CreateWinCondition(generatedSequence),
+                _gameplayConditionsFactory.CreateDefeatCondition(generatedSequence));
         }
     }
 }

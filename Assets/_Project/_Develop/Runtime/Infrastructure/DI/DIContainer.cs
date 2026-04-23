@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
-namespace Assets.Project._Develop.Runtime.Infrastructure.DI
-{
-    public class DIConteiner
+namespace Assets.Project._Develop.Runtime.Infrastructure.DI {
+
+    public class DIContainer
     {
-        public readonly Dictionary<Type, Registration> _container = new();
+        private readonly Dictionary<Type, Registration> _container = new();
 
         private readonly List<Type> _requests =new();
 
-        private readonly DIConteiner _parent;
+        private readonly DIContainer _parent;
 
-        public DIConteiner(DIConteiner parent) => _parent = parent;
+        public DIContainer(DIContainer parent) => _parent = parent;
 
-        public DIConteiner() : this(null)
+        public DIContainer() : this(null)
         {
 
         }
 
 
-        public void RegisterAsSingle<T>(Func<DIConteiner, T> creator)
+        public IRegistrationOptions RegisterAsSingle<T>(Func<DIContainer, T> creator)
         {
             if (IsAlreadyRegister<T>())
                 throw new InvalidOperationException($"{typeof(T)} is already register");
 
             Registration registration = new Registration(container => creator.Invoke(container));
             _container.Add(typeof(T), registration);
+
+            return registration;
         }
 
         public bool IsAlreadyRegister<T>()
@@ -51,7 +51,7 @@ namespace Assets.Project._Develop.Runtime.Infrastructure.DI
             try
             {
                 if (_container.TryGetValue(typeof(T), out Registration registration))
-                    return (T)registration.CreateInstamceFrom(this);
+                    return (T)registration.CreateInstanceFrom(this);
 
                 if (_parent != null)
                     return _parent.Resolve<T>();
@@ -62,6 +62,15 @@ namespace Assets.Project._Develop.Runtime.Infrastructure.DI
             }
 
             throw new InvalidOperationException($"Registration for {typeof(T)} is not founded!");
+        }
+
+        public void Initialize()
+        {
+            foreach(Registration registration in _container.Values)
+            {
+                if (registration.IsNonLazy)
+                    registration.CreateInstanceFrom(this);
+            }
         }
     }
 }

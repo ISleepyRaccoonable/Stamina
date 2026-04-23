@@ -1,4 +1,4 @@
-namespace Assets.Project._Develop.Runtime.Gameplay.Configs
+namespace Assets.Project._Develop.Runtime.Configs
 {
     public class ConfigsName
     {

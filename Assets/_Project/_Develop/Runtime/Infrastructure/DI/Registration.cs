@@ -2,14 +2,16 @@
 
 namespace Assets.Project._Develop.Runtime.Infrastructure.DI
 {
-    public class Registration
+    public class Registration : IRegistrationOptions
     {
-        private Func<DIConteiner, object> _creator;
+        private Func<DIContainer, object> _creator;
         private object _cachedInstance;
 
-        public Registration(Func<DIConteiner, object> creator) => _creator = creator;
+        public bool IsNonLazy { get; private set; }
 
-        public object CreateInstamceFrom(DIConteiner conteiner)
+        public Registration(Func<DIContainer, object> creator) => _creator = creator;
+
+        public object CreateInstanceFrom(DIContainer conteiner)
         {
             if (_cachedInstance != null)
                 return _cachedInstance;
@@ -21,5 +23,7 @@ namespace Assets.Project._Develop.Runtime.Infrastructure.DI
 
             return _cachedInstance;
         }
+
+        public void NonLazy() => IsNonLazy = true;
     }
 }

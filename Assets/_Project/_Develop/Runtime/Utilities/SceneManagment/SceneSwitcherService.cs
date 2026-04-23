@@ -12,12 +12,12 @@ namespace Assets.Project._Develop.Runtime.Utilities.SceneManagment
     {
         private readonly SceneLoaderService _sceneLoaderService;
         private readonly ILoadingScreen _loadingScreen;
-        private readonly DIConteiner _projectConteiner;
+        private readonly DIContainer _projectConteiner;
 
         public SceneSwitcherService(
             SceneLoaderService sceneLoaderService,
             ILoadingScreen loadingScreen,
-            DIConteiner projectConteiner)
+            DIContainer projectConteiner)
         {
             _sceneLoaderService = sceneLoaderService;
             _loadingScreen = loadingScreen;
@@ -38,9 +38,11 @@ namespace Assets.Project._Develop.Runtime.Utilities.SceneManagment
             if (sceneBootstrap == null)
                 throw new NullReferenceException($"{typeof(SceneBootstrap)} is null");
 
-            DIConteiner sceneContainer = new DIConteiner(_projectConteiner);
+            DIContainer sceneContainer = new DIContainer(_projectConteiner);
 
             sceneBootstrap.ProcessRegistrations(sceneContainer, inputSceneArgs);
+
+            sceneContainer.Initialize();
 
             yield return sceneBootstrap.Initiaize();
 
